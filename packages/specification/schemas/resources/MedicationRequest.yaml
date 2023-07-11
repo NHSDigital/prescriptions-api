@@ -25,6 +25,25 @@ properties:
       Cancelled means the item has been cancelled by the prescriber.
       Stopped means the item has not been issued to the patient by the dispenser.
     enum: [active, cancelled, stopped]
+  statusReason:
+    type: object
+    description: The reason why a line item is in a given status. 
+    properties:
+      coding:
+        type: array
+        items:
+          type: object
+          properties:
+            system:
+              type: string
+              description: codesystem URL.
+              enum: ["https://fhir.nhs.uk/CodeSystem/medicationrequest-status-reason"]
+            code:
+              type: string
+              description: The coded reason why a line item is in a given status.
+            display:
+              type: string
+              description: The reason, in text, why a line item is in a given status. 
   intent:
     type: string
     description: The intent of a MedicationRequest object. Required by the FHIR standard but offers no patient value and can be ignored.
