@@ -17,10 +17,6 @@
 			"path": "../packages/sandbox"
 		},
 		{
-			"name": "packages/specification",
-			"path": "../packages/specification"
-		},
-		{
 			"name": "packages/middleware",
 			"path": "../packages/middleware"
 		},
@@ -38,7 +34,6 @@
 			"prescriptionsforpatients-monorepo",
 			"packages/capabilityStatement",
 			"packages/sandbox",
-			"packages/specification",
 			"packages/splunkProcessor"
 		],
 		"files.exclude": {
@@ -92,8 +87,7 @@
 		"cSpell.ignorePaths": [
 			"package-lock.json",
 			"node_modules",
-			".vscode",
-			"packages/specification"
+			".vscode"
 		]
 	},
 	"extensions": {

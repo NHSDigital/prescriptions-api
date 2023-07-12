@@ -2,7 +2,6 @@
 # Dependabot configuration file
 # -----------------------------
 # Checks for updates for the following components:
-# - API Specification (OAS): npm
 # - E2E Tests (Pact tests): npm
 # - EPS API (Coordinator): npm + Docker
 # - EPS API Tool (EPSAT): npm + Docker

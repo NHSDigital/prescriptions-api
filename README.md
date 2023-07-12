@@ -6,7 +6,7 @@ This is an API for accessing prescription information.
 
 - `packages/getMyPrescriptions/` Get prescription details for /Bundle endpoint.
 - `packages/splunkProcessor/` Processes CloudWatch logs for Splunk.
-- `packages/sandbox/` Returns [static data](./packages/specification/examples/GetMyPrescriptions/Bundle/success.json) from the Sandbox
+- `packages/sandbox/` Returns [static data](./packages/sandbox/examples/GetMyPrescriptions/Bundle/success.json) from the Sandbox
 - `packages/middleware/` A modified [middy-error-handler](https://github.com/schibsted/middy-error-handler) to return FHIR responses
 - `packages/statusLambda/` Returns the status of the getMyPrescriptions endpoint
 - `scripts/` Utilities helpful to developers of this specification.

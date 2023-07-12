@@ -21,7 +21,6 @@
     "packages/getMyPrescriptions",
     "packages/middleware",
     "packages/sandbox",
-    "packages/specification",
     "packages/splunkProcessor",
     "packages/statusLambda"
   ],
