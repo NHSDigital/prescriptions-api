@@ -13,8 +13,5 @@
     "node": "v18.16.x",
     "npm": "9.x"
   },
-  "homepage": "https://github.com/NHSDigital/prescriptionsforpatients",
-  "dependencies": {
-    "@apidevtools/swagger-cli": "^4.0.4"
-  }
+  "homepage": "https://github.com/NHSDigital/prescriptionsforpatients"
 }
