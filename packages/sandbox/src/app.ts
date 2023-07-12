@@ -3,7 +3,7 @@ import {Logger, injectLambdaContext} from "@aws-lambda-powertools/logger"
 import middy from "@middy/core"
 import inputOutputLogger from "@middy/input-output-logger"
 import errorHandler from "@schibsted/middy-error-handler"
-import successData from "../../specification/examples/GetMyPrescriptions/Bundle/success.json"
+import successData from "../examples/GetMyPrescriptions/Bundle/success.json"
 
 const logger = new Logger({serviceName: "sandbox"})
 
