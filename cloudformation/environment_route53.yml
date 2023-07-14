@@ -17,7 +17,9 @@ Resources:
     Type: "AWS::Route53::HostedZone"
     Properties:
       HostedZoneConfig:
-        Comment: !Sub "My hosted zone for ${!Join ['.', [!Ref environment, !Ref hostedZone]]}"
+        Comment: !Sub
+          - "My hosted zone for ${Domain}"
+          - Domain: !Join [".", [!Ref environment, !Ref hostedZone]]
       Name: !Join [".", [!Ref environment, !Ref hostedZone]]
 
 Outputs:

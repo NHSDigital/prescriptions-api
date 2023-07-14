@@ -29,3 +29,51 @@ Resources:
           "ns-1854.awsdns-39.co.uk",
         ]
     DependsOn: Zone
+
+  nsQAHostedZoneRecordSet:
+    Type: "AWS::Route53::RecordSet"
+    Properties:
+      HostedZoneId: !Ref Zone
+      Name: !Join [".", ["qa", !Ref hostedZone, ""]]
+      Type: NS
+      TTL: "900"
+      ResourceRecords:
+        [
+          "ns-498.awsdns-62.com",
+          "ns-1935.awsdns-49.co.uk",
+          "ns-816.awsdns-38.net",
+          "ns-1174.awsdns-18.org",
+        ]
+    DependsOn: Zone
+
+  nsIntHostedZoneRecordSet:
+    Type: "AWS::Route53::RecordSet"
+    Properties:
+      HostedZoneId: !Ref Zone
+      Name: !Join [".", ["int", !Ref hostedZone, ""]]
+      Type: NS
+      TTL: "900"
+      ResourceRecords:
+        [
+          "ns-319.awsdns-39.com",
+          "ns-1202.awsdns-22.org",
+          "ns-1915.awsdns-47.co.uk",
+          "ns-947.awsdns-54.net",
+        ]
+    DependsOn: Zone
+
+  nsRefHostedZoneRecordSet:
+    Type: "AWS::Route53::RecordSet"
+    Properties:
+      HostedZoneId: !Ref Zone
+      Name: !Join [".", ["ref", !Ref hostedZone, ""]]
+      Type: NS
+      TTL: "900"
+      ResourceRecords:
+        [
+          "ns-1019.awsdns-63.net",
+          "ns-1360.awsdns-42.org",
+          "ns-28.awsdns-03.com",
+          "ns-1854.awsdns-39.co.uk",
+        ]
+    DependsOn: Zone

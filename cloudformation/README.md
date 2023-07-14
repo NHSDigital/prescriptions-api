@@ -82,5 +82,5 @@ aws cloudformation deploy \
           --template-file cloudformation/environment_route53.yml \
           --stack-name route53-resources \
           --region eu-west-2 \
-          --parameter-overrides ParameterKey=environment,ParameterValue=<ENVIRONENT NAME>
+          --parameter-overrides environment=<ENVIRONMENT>
 ```
