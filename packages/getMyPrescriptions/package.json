@@ -5,6 +5,7 @@
   "main": "app.js",
   "author": "SAM CLI",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "unit": "jest",
     "lint": "eslint . --ext .ts --max-warnings 0 --fix",
@@ -15,11 +16,11 @@
   "dependencies": {
     "@aws-lambda-powertools/commons": "^1.11.0",
     "@aws-lambda-powertools/logger": "^1.10.0",
+    "@aws-lambda-powertools/parameters": "^1.11.0",
+    "@aws-sdk/client-secrets-manager": "^3.363.0",
     "@middy/core": "^4.5.2",
     "@middy/input-output-logger": "^4.5.3",
-    "module-alias": "^2.2.3"
-  },
-  "_moduleAliases": {
-    "@middleware": "middleware"
+    "@prescriptionsforpatients/middleware": "^1.0.0",
+    "@prescriptionsforpatients/spineClient": "^1.0.0"
   }
 }

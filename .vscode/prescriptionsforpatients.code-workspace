@@ -31,6 +31,14 @@
 		{
 			"name": "packages/statusLambda",
 			"path": "../packages/statusLambda"
+		},
+		{
+			"name": "packages/spineClient",
+			"path": "../packages/spineClient"
+		},
+		{
+			"name": "packages/getSecretLayer",
+			"path": "../packages/getSecretLayer"
 		}
 	],
 	"settings": {
@@ -39,7 +47,8 @@
 			"packages/capabilityStatement",
 			"packages/sandbox",
 			"packages/specification",
-			"packages/splunkProcessor"
+			"packages/splunkProcessor",
+			"packages/getSecretLayer"
 		],
 		"files.exclude": {
 			"packages/": true,

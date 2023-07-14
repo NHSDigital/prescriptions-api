@@ -14,7 +14,7 @@ readonly CERT_VALIDITY_DAYS="365"
 readonly CA_NAME="ca"
 readonly CA_CERTIFICATE_SUBJECT="/C=GB/ST=Leeds/L=Leeds/O=nhs/OU=prescriptions for patients private CA/CN=prescriptions for patients Private CA $(date +%Y%m%d_%H%M%S)"
 
-readonly CERT_PREFIX_DEV="dev-"
+readonly CERT_PREFIX="$1-"
 readonly CERT_PREFIX_CI="ci"
 readonly CERT_PREFIX_SANDBOX="sandbox"
 
@@ -64,14 +64,14 @@ function create_csr {
         openssl req -config "$BASE_DIR/$SMARTCARD_CERT_SIGNING_CONFIG" -new \
         -key "$KEYS_DIR/$key_name.pem" \
         -out "$CERTS_DIR/$key_name.csr" -outform PEM \
-        -subj "${CLIENT_CERT_SUBJECT_PREFIX}${CERT_PREFIX_DEV}${CERT_PREFIX_CI}${client_description}"
+        -subj "${CLIENT_CERT_SUBJECT_PREFIX}${CERT_PREFIX}${CERT_PREFIX_CI}${client_description}"
     elif [ "$key_name" = "apigee_client_cert_sandbox" ]
     then
         echo "@ Creating CSR for '$key_name'..."
         openssl req -config "$BASE_DIR/$SMARTCARD_CERT_SIGNING_CONFIG" -new \
         -key "$KEYS_DIR/$key_name.pem" \
         -out "$CERTS_DIR/$key_name.csr" -outform PEM \
-        -subj "${CLIENT_CERT_SUBJECT_PREFIX}${CERT_PREFIX_DEV}${CERT_PREFIX_SANDBOX}${client_description}"
+        -subj "${CLIENT_CERT_SUBJECT_PREFIX}${CERT_PREFIX}${CERT_PREFIX_SANDBOX}${client_description}"
     fi
 }
 
@@ -104,6 +104,9 @@ function generate_client_cert {
     convert_cert_to_der "$name"
 }
 
+echo "AWS_PROFILE: ${AWS_PROFILE}"
+echo "CERT_PREFIX ${CERT_PREFIX}"
+read -p "Press any key to resume ..."
 
 # Recreate output dirs
 rm -rf "$CERTS_DIR" "$KEYS_DIR" "$CRL_DIR" "$CONFIG_DIR"

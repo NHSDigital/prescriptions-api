@@ -5,6 +5,7 @@
     "es6": true,
     "jest": true
   },
+  "ignorePatterns": ["**/lib/*"],
   "parserOptions": {"ecmaVersion": "latest"},
   "plugins": ["import-newlines"],
   "extends": ["eslint:recommended"],

@@ -390,6 +390,38 @@ Resources:
       KmsKeyId: alias/SecretsKMSKeyAlias
       SecretString: ChangeMe
 
+  SpinePrivateKey:
+    DependsOn: SecretsKMSKeyKMSKeyAlias
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: Private key for spine mutual TLS
+      KmsKeyId: alias/SecretsKMSKeyAlias
+      SecretString: ChangeMe
+
+  SpinePublicCertificate:
+    DependsOn: SecretsKMSKeyKMSKeyAlias
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: Public certificate for spine mutual TLS
+      KmsKeyId: alias/SecretsKMSKeyAlias
+      SecretString: ChangeMe
+
+  SpineASID:
+    DependsOn: SecretsKMSKeyKMSKeyAlias
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: ASID for spine
+      KmsKeyId: alias/SecretsKMSKeyAlias
+      SecretString: ChangeMe
+
+  SpineCAChain:
+    DependsOn: SecretsKMSKeyKMSKeyAlias
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: CA chain for spine
+      KmsKeyId: alias/SecretsKMSKeyAlias
+      SecretString: ChangeMe
+
 Outputs:
   CloudFormationDeployRole:
     Description: ARN of the IAM Role(CloudFormationDeployRole)
@@ -429,3 +461,28 @@ Outputs:
   ClientSandboxCertSecret:
     Description: ARN of the client cert secret for sandbox
     Value: !GetAtt ClientSandboxCertSecret.Id
+  SpinePrivateKey:
+    Description: ARN of the private key for spine mutual TLS
+    Value: !GetAtt SpinePrivateKey.Id
+    Export:
+      Name: !Join [":", [!Ref "AWS::StackName", "SpinePrivateKey"]]
+  SpinePublicCertificate:
+    Description: ARN of the public certificate for spine mutual TLS
+    Value: !GetAtt SpinePublicCertificate.Id
+    Export:
+      Name: !Join [":", [!Ref "AWS::StackName", "SpinePublicCertificate"]]
+  SpineASID:
+    Description: ASID for spine
+    Value: !GetAtt SpineASID.Id
+    Export:
+      Name: !Join [":", [!Ref "AWS::StackName", "SpineASID"]]
+  SecretsKMSKey:
+    Description: SecretsKMSKey
+    Value: !GetAtt SecretsKMSKey.Arn
+    Export:
+      Name: !Join [":", [!Ref "AWS::StackName", "SecretsKMSKey"]]
+  SpineCAChain:
+    Description: SpineCAChain
+    Value: !GetAtt SpineCAChain.Id
+    Export:
+      Name: !Join [":", [!Ref "AWS::StackName", "SpineCAChain"]]

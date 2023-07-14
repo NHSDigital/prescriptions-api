@@ -2,7 +2,8 @@ import {APIGatewayProxyEvent, APIGatewayProxyResult} from "aws-lambda"
 import {Logger, injectLambdaContext} from "@aws-lambda-powertools/logger"
 import middy from "@middy/core"
 import inputOutputLogger from "@middy/input-output-logger"
-import errorHandler from "@middleware/src"
+import errorHandler from "@prescriptionsforpatients/middleware"
+import createSpineClient from "@prescriptionsforpatients/spineClient"
 
 const logger = new Logger({serviceName: "getMyPrescriptions"})
 
@@ -19,12 +20,12 @@ const logger = new Logger({serviceName: "getMyPrescriptions"})
  */
 
 const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const targetSpineServer = process.env.TargetSpineServer
-  logger.info(`hello world from getMyPrescriptions logger - target spine server ${targetSpineServer}`)
-
   // nhsd-nhslogin-user looks like P9:9912003071
   const nhsNumber = event.headers["nhsd-nhslogin-user"]?.split(":")[1]
   logger.info(`nhsNumber: ${nhsNumber}`)
+
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  const spineClient = createSpineClient()
 
   const returnType = event.queryStringParameters?.returnType
   logger.info({message: "value of returnType", returnType})

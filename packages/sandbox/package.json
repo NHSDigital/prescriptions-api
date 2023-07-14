@@ -17,6 +17,6 @@
     "@aws-lambda-powertools/logger": "^1.10.0",
     "@middy/core": "^4.5.2",
     "@middy/input-output-logger": "^4.5.3",
-    "@schibsted/middy-error-handler": "^4.2.2"
+    "@prescriptionsforpatients/middleware": "^1.0.0"
   }
 }

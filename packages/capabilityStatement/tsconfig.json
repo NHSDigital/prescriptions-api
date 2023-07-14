@@ -1,17 +1,11 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "es2020",
-    "strict": true,
-    "preserveConstEnums": true,
-    "noEmit": true,
-    "sourceMap": false,
-    "module": "es2015",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "rootDir": ".",
+    "outDir": "lib",
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "tests/**/*"],
+  "references": [{"path": "../middleware"}],
+  "include": ["src/**/*", "tests/**/*", "examples/CapabilityStatement/apim-medicines-prescriptionsforpatients.json"],
   "exclude": ["node_modules"]
 }

@@ -18,3 +18,5 @@ release_notes
 /ecs-*.yml
 .venv
 .aws-sam
+lib/
+*.tsbuildinfo

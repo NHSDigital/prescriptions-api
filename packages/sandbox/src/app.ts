@@ -2,8 +2,8 @@ import {APIGatewayProxyResult} from "aws-lambda"
 import {Logger, injectLambdaContext} from "@aws-lambda-powertools/logger"
 import middy from "@middy/core"
 import inputOutputLogger from "@middy/input-output-logger"
-import errorHandler from "@schibsted/middy-error-handler"
-import successData from "../../specification/examples/GetMyPrescriptions/Bundle/success.json"
+import errorHandler from "@prescriptionsforpatients/middleware"
+import successData from "../examples/GetMyPrescriptions/Bundle/success.json"
 
 const logger = new Logger({serviceName: "sandbox"})
 
@@ -20,9 +20,6 @@ const logger = new Logger({serviceName: "sandbox"})
  */
 
 const lambdaHandler = async (): Promise<APIGatewayProxyResult> => {
-  const targetSpineServer = process.env.TargetSpineServer
-  logger.info(`hello world from sandbox logger - target spine server ${targetSpineServer}`)
-
   return {
     statusCode: 200,
     body: JSON.stringify({

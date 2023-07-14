@@ -112,3 +112,5 @@ describe("Unit test for app handler", function () {
     })
   })
 })
+
+export {}

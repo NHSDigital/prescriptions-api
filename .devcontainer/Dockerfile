@@ -40,7 +40,9 @@ RUN asdf plugin add python; \
     asdf plugin add shellcheck https://github.com/luizm/asdf-shellcheck.git; \
     asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git; \
     asdf plugin-add java; \
-    asdf plugin-add direnv;
+    asdf plugin-add direnv; \
+    asdf plugin-add golang https://github.com/kennyp/asdf-golang.git; \
+    asdf plugin add golangci-lint https://github.com/hypnoglow/asdf-golangci-lint.git;
 
 
 WORKDIR /workspaces/prescriptionsforpatients

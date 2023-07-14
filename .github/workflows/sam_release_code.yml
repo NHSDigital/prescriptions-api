@@ -85,4 +85,5 @@ jobs:
           --query 'Versions[?IsLatest].[VersionId]' --output text)
           export enable_mutual_tls=${{ inputs.ENABLE_MUTUAL_TLS }}
           export deploy_sandbox=${{ inputs.DEPLOY_SANDBOX }}
+          cd .aws-sam/build
           make sam-deploy-package

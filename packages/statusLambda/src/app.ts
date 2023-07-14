@@ -2,6 +2,8 @@ import {APIGatewayProxyEvent, APIGatewayProxyResult} from "aws-lambda"
 import {Logger, injectLambdaContext} from "@aws-lambda-powertools/logger"
 import middy from "@middy/core"
 import inputOutputLogger from "@middy/input-output-logger"
+import errorHandler from "@prescriptionsforpatients/middleware"
+import createSpineClient from "@prescriptionsforpatients/spineClient"
 
 const logger = new Logger({serviceName: "status"})
 
@@ -19,7 +21,9 @@ const logger = new Logger({serviceName: "status"})
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const lambdaHandler = async (_event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  // Check connection to spine using code common with getMyPrescriptions...
+  const spineClient = createSpineClient()
+
+  const spineStatus = await spineClient.getStatus(logger)
 
   const commitId = process.env.COMMIT_ID
   const versionNumber = process.env.VERSION_NUMBER
@@ -28,7 +32,8 @@ const lambdaHandler = async (_event: APIGatewayProxyEvent): Promise<APIGatewayPr
     statusCode: 200,
     body: JSON.stringify({
       commitId: commitId,
-      versionNumber: versionNumber
+      versionNumber: versionNumber,
+      spineStatus: spineStatus
     }),
     headers: {
       "Content-Type": "application/health+json"
@@ -45,3 +50,4 @@ export const handler = middy(lambdaHandler)
       }
     })
   )
+  .use(errorHandler({logger}))

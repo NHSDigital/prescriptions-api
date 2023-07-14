@@ -1,0 +1,24 @@
+{
+  "name": "@prescriptionsforpatients/spineClient",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/src/index.js",
+  "scripts": {
+    "unit": "jest",
+    "build": "tsc --build --clean ./tsconfig.json",
+    "lint": "eslint . --ext .ts --max-warnings 0 --fix",
+    "test": "npm run compile && npm run unit",
+    "check-licenses": "license-checker --failOn GPL --failOn LGPL --start ../..",
+    "compile": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-lambda-powertools/logger": "^1.11.0",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/moxios": "^0.4.15",
+    "moxios": "^0.4.0"
+  }
+}

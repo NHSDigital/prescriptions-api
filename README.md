@@ -9,6 +9,11 @@ This is an API for accessing prescription information.
 - `packages/sandbox/` Returns [static data](./packages/specification/examples/GetMyPrescriptions/Bundle/success.json) from the Sandbox
 - `packages/middleware/` A modified [middy-error-handler](https://github.com/schibsted/middy-error-handler) to return FHIR responses
 - `packages/statusLambda/` Returns the status of the getMyPrescriptions endpoint
+- `packages/capabilityStatement/` Returns a static capability statement
+- `packages/getSecretLayer/` golang code that is used as a lambda layer to inject secrets to environment variables used by lambdas
+- `packages/specification/` OAS spec for the API
+- `packages/spineClient/` Module for connecting to spine
+- `postman/` Contains a postman collection for interacting with the API.
 - `scripts/` Utilities helpful to developers of this specification.
 - `cloudformation/` Contains cloudformation files used to create resources for CI builds and deployments
 - `privateCA/` Contains script to create self signed CA certificate and a client certificate used for mutual TLS
@@ -180,7 +185,15 @@ These are used to do common commands
 #### Linting and testing
 
 - `lint` runs lint for all code
+- `lint-node` runs lint for node code
+- `lint-go` runs lint for golang code
 - `test` runs unit tests for all code
+
+#### Compiling
+
+- `compile` compiles all code
+- `compile-node` runs tsc to compile typescript code
+- `compile-go` compiles golang binary
 
 #### Check licenses
 

@@ -2,7 +2,7 @@ import {APIGatewayProxyEvent, APIGatewayProxyResult} from "aws-lambda"
 import {handler} from "../src/app"
 import {expect, describe, it} from "@jest/globals"
 import {ContextExamples} from "@aws-lambda-powertools/commons"
-import successData from "../../specification/examples/GetMyPrescriptions/Bundle/success.json"
+import successData from "../examples/GetMyPrescriptions/Bundle/success.json"
 
 const dummyContext = ContextExamples.helloworldContext
 

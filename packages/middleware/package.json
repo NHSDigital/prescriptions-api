@@ -1,15 +1,16 @@
 {
-    "name": "middleware-error-handler",
-    "version": "0.0.1",
-    "description": "Adaptation of Middy middleware to return FHIR compliant error messages",
-    "main": "index.js",
-    "license": "MIT",
-    "scripts": {
-        "lint": "eslint . --fix",
-        "test": "jest",
-        "check-licenses": "license-checker --failOn GPL --failOn LGPL --start ../.."
-    },
-    "devDependencies": {
-        "http-errors": "2.0.0"
-    }
+  "name": "@prescriptionsforpatients/middleware",
+  "version": "1.0.0",
+  "description": "Adaptation of Middy middleware to return FHIR compliant error messages",
+  "main": "src/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc --build --clean ./tsconfig.json",
+    "lint": "eslint . --fix",
+    "test": "jest",
+    "check-licenses": "license-checker --failOn GPL --failOn LGPL --start ../.."
+  },
+  "devDependencies": {
+    "http-errors": "2.0.0"
+  }
 }

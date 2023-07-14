@@ -8,6 +8,13 @@ Globals:
   Function:
     Timeout: 30
     MemorySize: 256
+    Architectures:
+      - x86_64
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        NODE_OPTIONS: --enable-source-maps
+        TargetSpineServer: !Ref TargetSpineServer
 
 Parameters:
   TargetSpineServer:
@@ -36,25 +43,18 @@ Parameters:
     Description: Whether to use splunk
     Default: false
     AllowedValues: [true, false]
+  VersionNumber:
+    Type: String
+    Description: Current release version
+    Default: "xxx"
+  CommitId:
+    Type: String
+    Description: Most recent commit hash
+    Default: "xxx"
 
 Conditions:
   ShouldUseMutualTLS: !Equals [true, !Ref EnableMutualTLS]
   ShouldUseSplunk: !Equals [true, !Ref EnableSplunk]
-
-# Example of Mappings
-# Mappings:
-#   EnvVariables:
-#     stage:
-#         var1: user1
-#         API_BASE_URL: https://baseurl1.com
-#     prod:
-#         var1: user2
-#         API_BASE_URL: https://baseurl2.com
-
-# SAM Connectors: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/reference-sam-connector.html
-# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-connector.html
-# More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-# More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
 
 Resources:
   SplunkFirehose:
@@ -66,7 +66,7 @@ Resources:
         SplunkHECEndpoint: !Ref SplunkHECEndpoint
         EnableSplunk: !Ref EnableSplunk
 
-  # sandbox stuff
+  # sandbox lambda
   SandboxRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -96,7 +96,7 @@ Resources:
   SandboxKMSPolicy:
     Type: "AWS::IAM::Policy"
     Properties:
-      PolicyName: "allow-KMS-access"
+      PolicyName: "allow-CloudWatchKMS-access"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -127,16 +127,9 @@ Resources:
   Sandbox:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: packages/sandbox/src
+      CodeUri: packages
       Handler: app.handler
-      Runtime: nodejs18.x
       Role: !GetAtt SandboxRole.Arn
-      Architectures:
-        - x86_64
-      Environment:
-        Variables:
-          TargetSpineServer: !Ref TargetSpineServer
-          NODE_OPTIONS: --enable-source-maps
       Events:
         sandbox:
           Type: HttpApi
@@ -150,10 +143,11 @@ Resources:
         Minify: true
         Target: "es2020"
         Sourcemap: true
+        tsconfig: sandbox/tsconfig.json
         EntryPoints:
-          - app.ts
+          - sandbox/src/app.ts
 
-  # capabilityStatement stuff
+  # capabilityStatement lambda
   CapabilityStatementRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -183,7 +177,7 @@ Resources:
   CapabilityStatementKMSPolicy:
     Type: "AWS::IAM::Policy"
     Properties:
-      PolicyName: "allow-KMS-access"
+      PolicyName: "allow-CloudWatchKMS-access"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -214,16 +208,9 @@ Resources:
   CapabilityStatement:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: packages/capabilityStatement/src
+      CodeUri: packages
       Handler: app.handler
-      Runtime: nodejs18.x
       Role: !GetAtt CapabilityStatementRole.Arn
-      Architectures:
-        - x86_64
-      Environment:
-        Variables:
-          TargetSpineServer: !Ref TargetSpineServer
-          NODE_OPTIONS: --enable-source-maps
       Events:
         capabilityStatement:
           Type: HttpApi
@@ -237,8 +224,94 @@ Resources:
         Minify: true
         Target: "es2020"
         Sourcemap: true
+        tsconfig: capabilityStatement/tsconfig.json
         EntryPoints:
-          - app.ts
+          - capabilityStatement/src/app.ts
+
+  # _status endpoint lambda
+  StatusLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+  StatusLambdaLambdaPolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "allow-lambda-logging"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource:
+              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${StatusLambdaLogGroup}"
+              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${StatusLambdaLogGroup}:log-stream:*"
+      Roles:
+        - !Ref StatusLambdaRole
+  StatusLambdaKMSPolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "allow-CloudWatchKMS-access"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - kms:DescribeKey
+              - kms:GenerateDataKey*
+              - kms:Encrypt
+              - kms:ReEncrypt*
+            Resource:
+              - !GetAtt SplunkFirehose.Outputs.CloudWatchKMSKey
+      Roles:
+        - !Ref StatusLambdaRole
+  StatusLambdaLogGroup:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${StatusLambda}"
+      RetentionInDays: 30
+      KmsKeyId: !GetAtt SplunkFirehose.Outputs.CloudWatchKMSKey
+  StatusLambdaSplunkSubscriptionFilter:
+    Condition: ShouldUseSplunk
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      RoleArn: !GetAtt SplunkFirehose.Outputs.SplunkSubscriptionFilterRole
+      LogGroupName: !Ref StatusLambdaLogGroup
+      FilterPattern: '" "' # All logs
+      DestinationArn: !GetAtt SplunkFirehose.Outputs.SplunkDeliveryStream
+  StatusLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: packages
+      Handler: app.handler
+      Role: !GetAtt StatusLambdaRole.Arn
+      Environment:
+        Variables:
+          VERSION_NUMBER: !Ref VersionNumber
+          COMMIT_ID: !Ref CommitId
+      Events:
+        status:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApiGateway
+            Path: /_status
+            Method: get
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        tsconfig: statusLambda/tsconfig.json
+        EntryPoints:
+          - statusLambda/src/app.ts
 
   # TLS cert for custom domain
   GenerateCertificate:
@@ -302,86 +375,3 @@ Resources:
           - ShouldUseMutualTLS
           - true
           - !Ref "AWS::NoValue"
-
-  # _status endpoint stuff
-  StatusLambdaRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: "lambda.amazonaws.com"
-            Action: "sts:AssumeRole"
-  StatusLambdaLambdaPolicy:
-    Type: "AWS::IAM::Policy"
-    Properties:
-      PolicyName: "allow-lambda-logging"
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action:
-              - logs:CreateLogStream
-              - logs:PutLogEvents
-            Resource:
-              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${StatusLambdaLogGroup}"
-              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${StatusLambdaLogGroup}:log-stream:*"
-      Roles:
-        - !Ref StatusLambdaRole
-  StatusLambdaKMSPolicy:
-    Type: "AWS::IAM::Policy"
-    Properties:
-      PolicyName: "allow-KMS-access"
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action:
-              - kms:DescribeKey
-              - kms:GenerateDataKey*
-              - kms:Encrypt
-              - kms:ReEncrypt*
-            Resource:
-              - !GetAtt SplunkFirehose.Outputs.CloudWatchKMSKey
-      Roles:
-        - !Ref StatusLambdaRole
-  StatusLambdaLogGroup:
-    Type: "AWS::Logs::LogGroup"
-    Properties:
-      LogGroupName: !Sub "/aws/lambda/${StatusLambda}"
-      RetentionInDays: 30
-      KmsKeyId: !GetAtt SplunkFirehose.Outputs.CloudWatchKMSKey
-  StatusLambdaSplunkSubscriptionFilter:
-    Condition: ShouldUseSplunk
-    Type: AWS::Logs::SubscriptionFilter
-    Properties:
-      RoleArn: !GetAtt SplunkFirehose.Outputs.SplunkSubscriptionFilterRole
-      LogGroupName: !Ref StatusLambdaLogGroup
-      FilterPattern: '" "' # All logs
-      DestinationArn: !GetAtt SplunkFirehose.Outputs.SplunkDeliveryStream
-  StatusLambda:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: packages/statusLambda/src
-      Handler: app.handler
-      Runtime: nodejs18.x
-      Role: !GetAtt StatusLambdaRole.Arn
-      Architectures:
-        - x86_64
-      Events:
-        status:
-          Type: HttpApi
-          Properties:
-            ApiId: !Ref HttpApiGateway
-            Path: /_status
-            Method: get
-    Metadata: # Manage esbuild properties
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2020"
-        Sourcemap: true
-        EntryPoints:
-          - app.ts
